@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-3">Patients</h2>
+
+<!-- FILTER FORM -->
+<form method="GET" class="row g-2 mb-3">
+
+    <div class="col-md-2">
+        <input type="number" name="age_min" class="form-control"
+               placeholder="Age min" value="{{ request.args.get('age_min','') }}">
+    </div>
+
+    <div class="col-md-2">
+        <input type="number" name="age_max" class="form-control"
+               placeholder="Age max" value="{{ request.args.get('age_max','') }}">
+    </div>
+
+    <div class="col-md-2">
+        <select name="gender" class="form-select">
+            <option value="">All genders</option>
+            <option value="Male" {{ 'selected' if request.args.get('gender')=='Male' }}>Male</option>
+            <option value="Female" {{ 'selected' if request.args.get('gender')=='Female' }}>Female</option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="stroke" class="form-select">
+            <option value="">Stroke?</option>
+            <option value="1" {{ 'selected' if request.args.get('stroke')=='1' }}>Yes</option>
+            <option value="0" {{ 'selected' if request.args.get('stroke')=='0' }}>No</option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <input type="text" name="search" class="form-control"
+               placeholder="Search" value="{{ request.args.get('search','') }}">
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Apply</button>
+    </div>
+</form>
+
+<!-- ACTION BUTTONS -->
+<div class="mb-3">
+    <a href="{{ url_for('new_patient') }}" class="btn btn-success">Add Patient</a>
+
+    <!-- EXPORT PRESERVES FILTERS -->
+    <a href="{{ url_for('export_csv', **request.args) }}"
+       class="btn btn-warning">
+        Export Filtered CSV
+    </a>
+</div>
+
+<!-- TABLE -->
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Gender</th>
+            <th>Age</th>
+            <th>Glucose</th>
+            <th>BMI</th>
+            <th>Stroke</th>
+            <th style="width:160px;">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for p in patients %}
+        <tr>
+            <td>{{ p.external_id }}</td>
+            <td>{{ p.gender }}</td>
+            <td>{{ p.age }}</td>
+            <td>{{ p.avg_glucose_level }}</td>
+            <td>{{ p.bmi or '—' }}</td>
+            <td>{{ 'Yes' if p.stroke else 'No' }}</td>
+
+            <td>
+                <div class="d-flex gap-2">
+
+                    <!-- EDIT -->
+                    <a href="{{ url_for('edit_patient', patient_id=p.id) }}"
+                       class="btn btn-sm btn-primary">
+                        Edit
+                    </a>
+
+                    <!-- DELETE -->
+                    <form method="POST"
+                          action="{{ url_for('delete_patient', patient_id=p.id) }}"
+                          style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit"
+                                class="btn btn-sm btn-danger"
+                                onclick="return confirm('Delete this patient?');">
+                            Delete
+                        </button>
+                    </form>
+
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

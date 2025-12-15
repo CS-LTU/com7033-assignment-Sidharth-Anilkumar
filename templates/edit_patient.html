@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Edit Patient</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <p>
+        {{ form.external_id.label }}<br>
+        {{ form.external_id(size=32) }}
+    </p>
+
+    <p>
+        {{ form.gender.label }}<br>
+        {{ form.gender() }}
+    </p>
+
+    <p>
+        {{ form.age.label }}<br>
+        {{ form.age() }}
+    </p>
+
+    <p>
+        {{ form.hypertension.label }}<br>
+        {{ form.hypertension() }}
+    </p>
+
+    <p>
+        {{ form.ever_married.label }}<br>
+        {{ form.ever_married() }}
+    </p>
+
+    <p>
+        {{ form.work_type.label }}<br>
+        {{ form.work_type() }}
+    </p>
+
+    <p>
+        {{ form.residence_type.label }}<br>
+        {{ form.residence_type() }}
+    </p>
+
+    <p>
+        {{ form.avg_glucose_level.label }}<br>
+        {{ form.avg_glucose_level() }}
+    </p>
+
+    <p>
+        {{ form.bmi.label }}<br>
+        {{ form.bmi() }}
+    </p>
+
+    <p>
+        {{ form.smoking_status.label }}<br>
+        {{ form.smoking_status() }}
+    </p>
+
+    <p>
+        {{ form.stroke.label }}<br>
+        {{ form.stroke() }}
+    </p>
+
+    <p>
+        <button type="submit">Update Patient</button>
+    </p>
+</form>
+
+{% endblock %}
