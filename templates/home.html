@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center mb-4">
+    <div class="col-md-8 text-center">
+        <h2 class="mb-3">Welcome to the Stroke Management System</h2>
+        <p class="lead">
+            A secure platform designed to manage patient data, upload datasets,
+            and support stroke-related data analysis efficiently.
+        </p>
+
+        <div class="mt-4">
+            <a href="{{ url_for('login') }}" class="btn btn-primary me-2">Login</a>
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h5>About Us</h5>
+            <p>
+                The Stroke Management System is built to help healthcare
+                professionals organise, review, and maintain patient data
+                in a structured and secure manner.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h5>Help</h5>
+            <p>
+                Create an account or log in to access patient records,
+                upload datasets, and export data for analysis.
+                The navigation menu guides you through all available features.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h5>Contact Us</h5>
+            <p>
+                For support or system-related queries, please contact
+                the system administrator or your organisation’s IT team.
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

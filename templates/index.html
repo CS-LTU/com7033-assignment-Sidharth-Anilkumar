@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block page_wrapper %}
+<div class="dashboard-bg">
+    <div class="container py-4">
+
+        <!-- TOTAL PATIENTS CARD -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card p-4 text-center shadow-sm">
+                    <h6 class="text-uppercase text-muted">Total Patients</h6>
+                    <p class="display-6 fw-bold text-primary mb-0">
+                        {{ total_patients }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="row">
+            <div class="col">
+                <div class="card p-4 shadow-sm">
+                    <h5 class="mb-3">Quick Actions</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <a href="{{ url_for('patients') }}">View Patients</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('new_patient') }}">Add New Patient</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
