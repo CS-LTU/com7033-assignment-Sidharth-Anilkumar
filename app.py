@@ -74,14 +74,30 @@ def create_app():
     @app.route("/register", methods=["GET", "POST"])
     def register():
         form = RegistrationForm()
+
         if form.validate_on_submit():
+            existing_user = User.query.filter_by(
+                email=form.email.data
+            ).first()
+
+            if existing_user:
+                flash(
+                    "An account with this email already exists. Please log in.",
+                    "warning"
+                )
+                return redirect(url_for("login"))
+
             user = User(email=form.email.data)
             user.set_password(form.password.data)
+
             db.session.add(user)
             db.session.commit()
-            flash("Registration successful.", "success")
+
+            flash("Registration successful. Please log in.", "success")
             return redirect(url_for("login"))
+
         return render_template("register.html", form=form)
+
 
     @app.route("/login", methods=["GET", "POST"])
     def login():
