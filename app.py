@@ -22,9 +22,7 @@ import os
 import pandas as pd
 
 
-# -------------------------------------------------
 # APP FACTORY
-# -------------------------------------------------
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -49,16 +47,14 @@ def create_app():
     def load_user(user_id):
         return db.session.get(User, int(user_id))
 
-    # -------------------------------------------------
+   
     # HOME
-    # -------------------------------------------------
     @app.route("/")
     def home():
         return render_template("home.html")
 
-    # -------------------------------------------------
+    
     # DASHBOARD
-    # -------------------------------------------------
     @app.route("/dashboard")
     @login_required
     def dashboard():
@@ -68,9 +64,8 @@ def create_app():
             total_patients=total_patients
         )
 
-    # -------------------------------------------------
+    
     # AUTH
-    # -------------------------------------------------
     @app.route("/register", methods=["GET", "POST"])
     def register():
         form = RegistrationForm()
@@ -120,9 +115,8 @@ def create_app():
         logout_user()
         return redirect(url_for("home"))
 
-    # -------------------------------------------------
+    
     # PATIENT LIST + FILTERS
-    # -------------------------------------------------
     @app.route("/patients")
     @login_required
     def patients():
@@ -163,9 +157,8 @@ def create_app():
             patients=query.all()
         )
 
-    # -------------------------------------------------
+    
     # ADD PATIENT
-    # -------------------------------------------------
     @app.route("/patients/new", methods=["GET", "POST"])
     @login_required
     def new_patient():
@@ -190,9 +183,8 @@ def create_app():
             return redirect(url_for("patients"))
         return render_template("patient_form.html", form=form)
 
-    # -------------------------------------------------
+    
     # EDIT PATIENT
-    # -------------------------------------------------
     @app.route("/patients/<int:patient_id>/edit", methods=["GET", "POST"])
     @login_required
     def edit_patient(patient_id):
@@ -218,9 +210,8 @@ def create_app():
 
         return render_template("edit_patient.html", form=form)
 
-    # -------------------------------------------------
+    
     # DELETE SINGLE PATIENT
-    # -------------------------------------------------
     @app.route("/patients/<int:patient_id>/delete", methods=["POST"])
     @login_required
     def delete_patient(patient_id):
@@ -230,9 +221,8 @@ def create_app():
         flash("Patient deleted.", "warning")
         return redirect(url_for("patients"))
 
-    # -------------------------------------------------
+    
     # DELETE ENTIRE DATASET (THIS WAS MISSING)
-    # -------------------------------------------------
     @app.route("/delete-dataset", methods=["POST"])
     @login_required
     def delete_dataset():
@@ -244,9 +234,8 @@ def create_app():
         )
         return redirect(url_for("dashboard"))
 
-    # -------------------------------------------------
+   
     # CSV UPLOAD
-    # -------------------------------------------------
     @app.route("/upload", methods=["GET", "POST"])
     @login_required
     def upload():
@@ -296,9 +285,8 @@ def create_app():
 
         return render_template("upload.html", form=form)
 
-    # -------------------------------------------------
+    
     # EXPORT FILTERED CSV
-    # -------------------------------------------------
     @app.route("/export_csv")
     @login_required
     def export_csv():
@@ -327,9 +315,6 @@ def create_app():
     return app
 
 
-# -------------------------------------------------
-# RUN
-# -------------------------------------------------
 if __name__ == "__main__":
     app = create_app()
     with app.app_context():
