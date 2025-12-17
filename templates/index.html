@@ -4,11 +4,25 @@
 <div class="dashboard-bg">
     <div class="container py-4">
 
-        <!-- TOTAL PATIENTS CARD -->
+        <!-- PAGE HEADER -->
+        <div class="row mb-4">
+            <div class="col">
+                <div class="card p-4 shadow-sm">
+                    <h4 class="mb-1">Dashboard</h4>
+                    <p class="text-muted mb-0">
+                        Overview of patient data in the Stroke Management System.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOTAL PATIENTS -->
         <div class="row mb-4">
             <div class="col-md-4">
                 <div class="card p-4 text-center shadow-sm">
-                    <h6 class="text-uppercase text-muted">Total Patients</h6>
+                    <h6 class="text-uppercase text-muted">
+                        Total Patients
+                    </h6>
                     <p class="display-6 fw-bold text-primary mb-0">
                         {{ total_patients }}
                     </p>
@@ -18,16 +32,46 @@
 
         <!-- QUICK ACTIONS -->
         <div class="row">
-            <div class="col">
+            <div class="col-md-6">
                 <div class="card p-4 shadow-sm">
                     <h5 class="mb-3">Quick Actions</h5>
+
                     <ul class="list-unstyled mb-0">
+
                         <li class="mb-2">
-                            <a href="{{ url_for('patients') }}">View Patients</a>
+                            <a href="{{ url_for('patients') }}"
+                               class="text-decoration-none">
+                                View Patients
+                            </a>
                         </li>
-                        <li>
-                            <a href="{{ url_for('new_patient') }}">Add New Patient</a>
+
+                        <li class="mb-3">
+                            <a href="{{ url_for('new_patient') }}"
+                               class="text-decoration-none">
+                                Add New Patient
+                            </a>
                         </li>
+
+                        <li class="mt-4">
+                            <form action="{{ url_for('delete_dataset') }}"
+                                  method="POST"
+                                  class="d-inline">
+
+                                <!-- CSRF TOKEN (CORRECT WAY) -->
+                                <input type="hidden"
+                                       name="csrf_token"
+                                       value="{{ csrf_token() }}">
+
+                                <button type="submit"
+                                        class="btn btn-danger"
+                                        onclick="return confirm(
+                                            'This will permanently delete ALL patient records. Continue?'
+                                        )">
+                                    Delete Dataset
+                                </button>
+                            </form>
+                        </li>
+
                     </ul>
                 </div>
             </div>

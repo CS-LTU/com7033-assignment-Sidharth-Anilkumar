@@ -22,7 +22,9 @@ import os
 import pandas as pd
 
 
+# -------------------------------------------------
 # APP FACTORY
+# -------------------------------------------------
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -47,52 +49,16 @@ def create_app():
     def load_user(user_id):
         return db.session.get(User, int(user_id))
 
-    
-    # HELPER: BUILD FILTERED PATIENT QUERY
-    def build_patient_query():
-        search = request.args.get("search", "").strip()
-        gender = request.args.get("gender", "")
-        stroke = request.args.get("stroke", "")
-        age_min = request.args.get("age_min", "")
-        age_max = request.args.get("age_max", "")
-
-        query = Patient.query
-
-        if search:
-            query = query.filter(
-                (Patient.gender.ilike(f"%{search}%")) |
-                (Patient.smoking_status.ilike(f"%{search}%"))
-            )
-
-            if search.isdigit():
-                query = query.union(
-                    Patient.query.filter_by(
-                        external_id=int(search)
-                    )
-                )
-
-        if gender:
-            query = query.filter_by(gender=gender)
-
-        if stroke != "":
-            query = query.filter_by(stroke=bool(int(stroke)))
-
-        if age_min.isdigit():
-            query = query.filter(Patient.age >= int(age_min))
-
-        if age_max.isdigit():
-            query = query.filter(Patient.age <= int(age_max))
-
-        return query
-
-    
-    # PUBLIC HOME
+    # -------------------------------------------------
+    # HOME
+    # -------------------------------------------------
     @app.route("/")
     def home():
         return render_template("home.html")
 
-    
+    # -------------------------------------------------
     # DASHBOARD
+    # -------------------------------------------------
     @app.route("/dashboard")
     @login_required
     def dashboard():
@@ -102,8 +68,9 @@ def create_app():
             total_patients=total_patients
         )
 
-    
+    # -------------------------------------------------
     # AUTH
+    # -------------------------------------------------
     @app.route("/register", methods=["GET", "POST"])
     def register():
         form = RegistrationForm()
@@ -141,6 +108,7 @@ def create_app():
 
             current_user.set_password(form.new_password.data)
             db.session.commit()
+
             flash("Password updated successfully.", "success")
             return redirect(url_for("dashboard"))
 
@@ -152,19 +120,52 @@ def create_app():
         logout_user()
         return redirect(url_for("home"))
 
-    
-    # PATIENT LIST (FILTERED VIEW)
+    # -------------------------------------------------
+    # PATIENT LIST + FILTERS
+    # -------------------------------------------------
     @app.route("/patients")
     @login_required
     def patients():
-        query = build_patient_query()
+        search = request.args.get("search", "").strip()
+        gender = request.args.get("gender", "")
+        stroke = request.args.get("stroke", "")
+        age_min = request.args.get("age_min", "")
+        age_max = request.args.get("age_max", "")
+
+        query = Patient.query
+
+        if search:
+            query = query.filter(
+                (Patient.gender.ilike(f"%{search}%")) |
+                (Patient.smoking_status.ilike(f"%{search}%"))
+            )
+            if search.isdigit():
+                query = query.union(
+                    Patient.query.filter_by(
+                        external_id=int(search)
+                    )
+                )
+
+        if gender:
+            query = query.filter_by(gender=gender)
+
+        if stroke != "":
+            query = query.filter_by(stroke=bool(int(stroke)))
+
+        if age_min.isdigit():
+            query = query.filter(Patient.age >= int(age_min))
+
+        if age_max.isdigit():
+            query = query.filter(Patient.age <= int(age_max))
+
         return render_template(
             "patients.html",
             patients=query.all()
         )
 
-    
+    # -------------------------------------------------
     # ADD PATIENT
+    # -------------------------------------------------
     @app.route("/patients/new", methods=["GET", "POST"])
     @login_required
     def new_patient():
@@ -189,8 +190,9 @@ def create_app():
             return redirect(url_for("patients"))
         return render_template("patient_form.html", form=form)
 
-    
+    # -------------------------------------------------
     # EDIT PATIENT
+    # -------------------------------------------------
     @app.route("/patients/<int:patient_id>/edit", methods=["GET", "POST"])
     @login_required
     def edit_patient(patient_id):
@@ -216,8 +218,9 @@ def create_app():
 
         return render_template("edit_patient.html", form=form)
 
-
-    # DELETE PATIENT
+    # -------------------------------------------------
+    # DELETE SINGLE PATIENT
+    # -------------------------------------------------
     @app.route("/patients/<int:patient_id>/delete", methods=["POST"])
     @login_required
     def delete_patient(patient_id):
@@ -227,8 +230,23 @@ def create_app():
         flash("Patient deleted.", "warning")
         return redirect(url_for("patients"))
 
-    
+    # -------------------------------------------------
+    # DELETE ENTIRE DATASET (THIS WAS MISSING)
+    # -------------------------------------------------
+    @app.route("/delete-dataset", methods=["POST"])
+    @login_required
+    def delete_dataset():
+        deleted = Patient.query.delete()
+        db.session.commit()
+        flash(
+            f"Entire dataset deleted ({deleted} records).",
+            "danger"
+        )
+        return redirect(url_for("dashboard"))
+
+    # -------------------------------------------------
     # CSV UPLOAD
+    # -------------------------------------------------
     @app.route("/upload", methods=["GET", "POST"])
     @login_required
     def upload():
@@ -278,14 +296,13 @@ def create_app():
 
         return render_template("upload.html", form=form)
 
-    
+    # -------------------------------------------------
     # EXPORT FILTERED CSV
+    # -------------------------------------------------
     @app.route("/export_csv")
     @login_required
     def export_csv():
-        query = build_patient_query()
-        patients = query.all()
-
+        patients = Patient.query.all()
         filepath = os.path.join(
             "instance", "exported_patients.csv"
         )
@@ -310,6 +327,9 @@ def create_app():
     return app
 
 
+# -------------------------------------------------
+# RUN
+# -------------------------------------------------
 if __name__ == "__main__":
     app = create_app()
     with app.app_context():
