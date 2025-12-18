@@ -57,6 +57,12 @@ python app.py
 The application will run at:
 http://127.0.0.1:5000
 
+Test Login Details (for assessment use)
+
+Email: doctor@test.com  
+Password: Doctor@123
+
+
 Using the System
 
 •	Register a new user account
